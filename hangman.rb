@@ -21,7 +21,7 @@ class HumanPlayer
     dummy_word
   end
 
-  def guess_word
+  def guess_word(dummy_word)
     char = ""
     loop do
       puts "Guess a letter!"
@@ -127,12 +127,28 @@ class Hangman
     case number_humans
     when 0
       # fill in later. ask for strength of guesser.
+      @wordsmith_player = ComputerPlayer.new(dictionary)
+      difficulty = ask_strength
+      @guesser_player = ComputerPlayer.new(dictionary, :guesser, difficulty)
     when 1
       @guesser_player, @wordsmith_player = ask_roles(dictionary)
       # play
     when 2
       # fill in later
+      @wordsmith_player = HumanPlayer.new
+      @guesser_player = HumanPlayer.new
     end
+  end
+
+  def ask_strength
+    strength = 0
+    loop do
+      puts "Would you like a weak (0), medium (1), or strong (2) guesser?"
+      strength = gets.chomp.to_i
+      break if (0..2).include?(strength)
+    end
+
+     difficulty = get_difficulty(strength)
   end
 
   def ask_roles(dictionary)
@@ -149,14 +165,8 @@ class Hangman
       return [HumanPlayer.new, ComputerPlayer.new(dictionary)]
     when 1
       # computer is guessing, ask about difficulty
-      strength = -1
-      loop do
-        puts "Would you like a weak (0), medium (1), or strong (2) guesser?"
-        strength = gets.chomp.to_i
-        break if (0..2).include?(strength)
-      end
-
-      difficulty = get_difficulty(strength)
+      difficulty = ask_strength
+      
       # initialize human and computer players, then return them
       # dic mode diffic
       return [ComputerPlayer.new(dictionary, :guesser, difficulty), HumanPlayer.new]
