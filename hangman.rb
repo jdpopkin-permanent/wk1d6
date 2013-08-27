@@ -90,7 +90,24 @@ class ComputerPlayer
 
     unless difficulty == :easy
       # remove words that don't match a regex of the dummy
+      regex_string = regex_string(dummy_word)
+      regex = Regexp.new(regex_string)
+
+      dictionary_array.select! {|word| word =~ regex}
     end
+  end
+
+  def regex_string(dummy_word)
+    regex_string = ""
+    dummy_array = dummy_word.split("")
+    dummy_array.each do |char|
+      if char == "_"
+        regex_string << "[" + available_letters.join + "]"
+      else
+        regex_string << char
+      end
+    end
+    regex_string
   end
 
   def guess_word(dummy_word)
@@ -100,15 +117,36 @@ class ComputerPlayer
     if difficulty == :easy
       guess = available_letters.sample
     elsif difficulty == :medium
-
+      random_word = dictionary_array.sample
+      loop do
+        random_index = rand(random_word.length)
+        guess = random_word[random_index]
+        break if available_letters.include?(guess)
+      end
     elsif difficulty == :hard
-
+      guess = most_frequent_letter
     end
       
     guessed_letters << guess
-    available_letters.delete(guess)
+    available_letters.delete(guess) # is this not happening?
     
     guess
+  end
+
+  def most_frequent_letter
+    letters = dictionary_array.join.split("")
+    best_letter = available_letters.first # arbitrary choice
+    best_count = 0
+
+    available_letters.each do |char|
+      char_count = letters.count(char)
+      if char_count > best_count
+        best_count = char_count
+        best_letter = char
+      end
+    end
+
+    best_letter
   end
 
 end
@@ -159,6 +197,10 @@ class Hangman
       break if (0..1).include?(choice)
     end
 
+    set_roles(dictionary, choice) 
+  end
+
+  def set_roles(dictionary, choice)
     case choice
     when 0
       # human is guessing
@@ -202,7 +244,7 @@ class Hangman
   end
 
   def play
-    miss_limit = 5 # number of incorrect guesses before you lose
+    miss_limit = 7 # number of incorrect guesses before you lose
     misses = 0
 
     # get dummy word from @wordsmith_player
