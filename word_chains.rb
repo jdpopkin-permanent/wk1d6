@@ -59,25 +59,26 @@ end
 
 
 if __FILE__ == $PROGRAM_NAME
-loop do
-  words = File.read("dictionary.txt").split
-  puts "What word would you like to start at?"
-  start_word = gets.chomp
-  unless words.include?(start_word)
-    puts "Starting word not found in dictionary.txt."
-    next
-  end
-  puts "What word would you like to end up at?"
-  end_word = gets.chomp
-  unless words.include?(start_word)
-    puts "Goal word not found in dictionary.txt."
-    next
-  end
-  if start_word.length != end_word.length
-    puts "Word lengths must match."
-    next
-  end
+  loop do
+    words = File.read("dictionary.txt").split
+    puts "What word would you like to start at?"
+    start_word = gets.chomp
+    unless words.include?(start_word)
+      puts "Starting word not found in dictionary.txt."
+      next
+    end
+    puts "What word would you like to end up at?"
+    end_word = gets.chomp
+    unless words.include?(start_word)
+      puts "Goal word not found in dictionary.txt."
+      next
+    end
+    if start_word.length != end_word.length
+      puts "Word lengths must match."
+      next
+    end
 
-  wc = WordChains.new(start_word, end_word, "dictionary.txt")
-  puts wc.find_chain(start_word, end_word, "dictionary.txt")
+    wc = WordChains.new(start_word, end_word, "dictionary.txt")
+    puts wc.find_chain(start_word, end_word, "dictionary.txt")
+  end
 end
