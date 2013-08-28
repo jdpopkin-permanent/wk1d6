@@ -57,6 +57,8 @@ class WordChains
 
 end
 
+
+if __FILE__ == $PROGRAM_NAME
 loop do
   words = File.read("dictionary.txt").split
   puts "What word would you like to start at?"
